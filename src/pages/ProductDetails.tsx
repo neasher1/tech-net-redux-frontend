@@ -1,12 +1,25 @@
 import ProductReview from '@/components/ProductReview';
 import { Button } from '@/components/ui/button';
+import { toast } from '@/components/ui/use-toast';
+import { addToCart } from '@/redux/feature/cart/cartSlice';
 import { useSingleProductQuery } from '@/redux/feature/product/productApi';
+import { useAppDispatch } from '@/redux/hook';
+import { IProduct } from '@/types/globalTypes';
 import { useParams } from 'react-router-dom';
 
 export default function ProductDetails() {
   const { id } = useParams();
 
   const { data: product, isLoading, error } = useSingleProductQuery(id);
+
+  const dispatch = useAppDispatch();
+
+  const handleAddProduct = (product: IProduct) => {
+    dispatch(addToCart(product));
+    toast({
+      description: 'Product Added',
+    });
+  };
 
   return (
     <>
@@ -22,7 +35,7 @@ export default function ProductDetails() {
               <li key={feature}>{feature}</li>
             ))}
           </ul>
-          <Button>Add to cart</Button>
+          <Button onClick={() => handleAddProduct(product)}>Add to cart</Button>
         </div>
       </div>
       <ProductReview id={id!} />
